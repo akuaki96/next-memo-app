@@ -1,21 +1,28 @@
-import { useState } from "react";
+import { ChangeEvent, useState, FC } from "react";
 import style from "../styles/home.module.scss";
+import { InputArea } from "./components/inputArea";
+import { MemoArea } from "./components/memoArea";
 
-const Home = () => {
+const Home: FC = () => {
   const [inputMemo, setInputMemo] = useState<string>("");
   const [memoList, setMemoList] = useState<string[]>([]);
 
-  const onClickAddButton = () => {
-    setMemoList([...memoList, inputMemo]);
-    setInputMemo("");
-  };
-
-  const onChangeMemo = (e: any) => {
-    console.log(e);
+  const onChangeMemo = (e: ChangeEvent<HTMLInputElement>): void => {
     setInputMemo(e.target.value);
   };
 
-  const onClickDeleteButton = () => {};
+  const onClickAddButton = () => {
+    const newMemoList: Array<string> = [...memoList];
+    newMemoList.push(inputMemo);
+    setMemoList(newMemoList);
+    setInputMemo("");
+  };
+
+  const onClickDeleteButton = (index: number): void => {
+    const newMemoList: Array<string> = [...memoList];
+    newMemoList.splice(index, 1);
+    setMemoList(newMemoList);
+  };
 
   return (
     <div>
@@ -23,37 +30,16 @@ const Home = () => {
         <h1>簡単メモアプリ</h1>
       </div>
 
-      <div className={style.inputArea}>
-        <input
-          placeholder="メモを入力"
-          value={inputMemo}
-          onChange={onChangeMemo}
-        ></input>
-        <button
-          className={`${style.inputButton} ${style.button}`}
-          onClick={onClickAddButton}
-        >
-          追加
-        </button>
-      </div>
+      <InputArea
+        input={inputMemo}
+        onChange={onChangeMemo}
+        addButton={onClickAddButton}
+      ></InputArea>
 
-      <div className={style.memoArea}>
-        <ul>
-          {memoList.map((memo) => (
-            <li>
-              <div className={style.memoList}>
-                <p>{memo}</p>
-                <button
-                  className={`${style.deleteButton} ${style.button}`}
-                  onClick={onClickDeleteButton}
-                >
-                  削除
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <MemoArea
+        memoList={memoList}
+        deleteButton={onClickDeleteButton}
+      ></MemoArea>
     </div>
   );
 };
